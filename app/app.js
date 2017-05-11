@@ -3,6 +3,6 @@
 
 //The module
   angular
-    .module('app', []);
+    .module('app', ['toastr']);
 
 })();

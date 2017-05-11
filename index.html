@@ -1,82 +1,108 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app">
+
 <head>
   <meta charset="UTF-8">
   <title>Weather App</title>
-<!-- bower:css -->
-<link rel="stylesheet" href="bower_components/angular-toastr/dist/angular-toastr.css" />
-<!-- endbower -->
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/angular-toastr/dist/angular-toastr.css" />
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+  <!-- endbower -->
 
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <!-- inject:css -->
 
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!-- inject:css -->
+  <link rel="stylesheet" href="/app/styles/styles.css">
 
-<link rel="stylesheet" href="/app/styles/styles.css">
-
-<!-- endinject -->
+  <!-- endinject -->
 </head>
 
-<body ng-controller="MainController as vm">
-
-  <form class="form-inline">
-    <div class="jumbotron">
+<body ng-controller="weatherFinderController as weatherFinderCtrl">
   <div class="container">
-    <h1 class="display-3">What's the Weather!?!</h1>
-    <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
-  </div>
-</div>
-<nav class="navbar navbar-inverse">
-<div class="container-fluid">
-<!-- Brand and toggle get grouped for better mobile display -->
-<div class="navbar-header">
-  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-    <span class="sr-only">Toggle navigation</span>
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-  </button>
-  <a class="navbar-brand" href="#">Brand</a>
-</div>
-
-<!-- Collect the nav links, forms, and other content for toggling -->
-<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-  <ul class="nav navbar-nav">
-    <li class="active"><a href="#">Location <span class="sr-only">(current)</span></a></li>
-    <li><a href="#">Location</a></li>
-  </ul>
-  <form class="navbar-form navbar-right">
-    <div class="form-group">
-      <input type="text" class="form-control" placeholder="Pick a location">
+    <div class="jumbotron" id="jumbotron">
+      <h1>What's the Weather!?!</h1>
+      <p>This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
     </div>
-    <button type="submit" class="btn btn-default">Go!</button>
-  </form>
-</div><!-- /.navbar-collapse -->
-</div><!-- /.container-fluid -->
-</nav>
+    <!--Navigation Bar-->
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <div class="navbar-form navbar-left">
+            <div class="btn-group" role="group" aria-label="...">
+              <li>
+                <!-- Ng-Repeat to get search history list and Ng-click for recall buttons -->
+               <button type="button" class="btn btn-warning btn-xs" ng-repeat="name in weatherFinderCtrl.nameOfCity track by $index" 
+               ng-click="weatherFinderCtrl.findWeather(name)">{{name}}</button>
+               </li>
+            </div>
+          </div>
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" class="form-control" ng-model="weatherFinderCtrl.searchTerm" placeholder="Find the weather">
+            </div>
+            <!-- button to submit location data -->
+            <button type="submit" class="btn btn-default" ng-click="weatherFinderCtrl.findWeather(weatherFinderCtrl.searchTerm)">Go!</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <!--City Info Panel-->
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <div class="panel panel-warning">
+          <div class="panel-heading">
+            <h3 class="panel-title">City Information</h3>
+          </div>
+          <div class="panel-body">
+            <div class="page-header">
+              <!-- input data for city weather information -->
+              <h1>{{weatherFinderCtrl.results.name}}</h1>
+            </div>
+            <ul class="list-group">
+              <!-- input data for city weather information -->
+              <li class="list-group-item">Temperatue: {{weatherFinderCtrl.results.main.temp}}</li>
+              <li class="list-group-item">Minimum Temperature: {{weatherFinderCtrl.results.main.temp_min}}</li>
+              <li class="list-group-item">Max Temperature: {{weatherFinderCtrl.results.main.temp_max}}</li>
+              <li class="list-group-item">Humidity: {{weatherFinderCtrl.results.main.humidity}}</li>
+              <li class="list-group-item">Wind: {{weatherFinderCtrl.results.wind}}</li>
+              <li class="list-group-item">Pressure: {{weatherFinderCtrl.results.main.pressure}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!--Search History Panel-->
+      <div class="col-xs-12 col-md-6">
+        <div class="panel panel-warning">
+          <div class="panel-heading">
+            <h3 class="panel-title">Search History</h3>
+          </div>
+          <div class="panel-body">
+            <ul class="list-group">
+              <li class="list-group-item" ng-repeat="name in weatherFinderCtrl.nameOfCity" >{{name}}  {{weatherFinderCtrl.results.main.temp}}  {{weatherFinderCtrl.today | date:'short'}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 
 
-
-    </form>
-
-
-
-<!-- bower:js -->
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
-<!-- endbower -->
-<!-- inject:js -->
-<script src="/app/app.js"></script>
-<script src="/app/main.controller.js"></script>
-<!-- endinject -->
+  <!-- bower:js -->
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <!-- endbower -->
+  <!-- inject:js -->
+   <script src="/app/app.js"></script>
+   <script src="/app/core/weatherFinder.factory.js"></script>
+   <script src="/app/mainController/weatherFinder.controller.js"></script>
+   <!-- endinject -->
 </body>
+
 </html>
